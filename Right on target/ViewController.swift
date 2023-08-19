@@ -13,7 +13,6 @@ class ViewController: UIViewController {
     var round = 0
     var point = 0
     
-    
     private let numSlider = CustomSlider()
     private let startBotton = CustomButton(withTitle: "Проверить", textAlignment: .center, font: 30)
     private let minValueLabel = CustomLabel(title: "1", font: UIFont.systemFont(ofSize: 20))
@@ -50,7 +49,6 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .yellow
-        
         view.addSubview(verticalStackView)
         view.addSubview(horizontalStackView)
         checkNumber()
@@ -75,56 +73,49 @@ class ViewController: UIViewController {
             horizontalStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             horizontalStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             
-            
             verticalStackView.topAnchor.constraint(equalTo: horizontalStackView.bottomAnchor, constant: 80),
             verticalStackView.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor, constant: -700),
-//            verticalStackView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor, constant: 200),
             verticalStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 100),
             verticalStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -100),
-//            verticalStackView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
-            
             minValueLabel.widthAnchor.constraint(greaterThanOrEqualToConstant: 30),
             maxValueLabel.widthAnchor.constraint(greaterThanOrEqualToConstant: 30)
         ])
     }
     
     private func addTarget() {
-        startBotton.addTarget(self, action: #selector(comparisonValue), for: .touchUpInside)
-        numSlider.addTarget(self, action: #selector(passingSliderValue), for: .valueChanged)
-    }
-    
-    @objc func passingSliderValue() {
-        
+        startBotton.addTarget(self, action: #selector(checkNumber), for: .touchUpInside)
         
     }
     
-    func checkNumber() {
+    @objc  func checkNumber() {
         
         if round == 0 {
             number = Int.random(in: 1...50)
             print(number)
             totalValueLabel.text = String(number)
             round = 1
-       
+        } else {
+            let slider = Int(numSlider.value.rounded())
             
+            if slider > number {
+                point += 50 - slider + number
+            } else if slider < number {
+                point += 50 - number + slider
+            } else {
+                point += 50
+            }
         }
         if round == 5 {
             showAlert()
-        }
-                
-    }
-     
-    @objc  func comparisonValue() {
-            
-        let slider = Int(numSlider.value.rounded())
-        
-        if slider > number {
-            point += 50 - slider + number
-        } else if slider < number {
-            point += 50 - number + slider
+            round = 1
+            point = 0
         } else {
-            point += 50
+            round += 1
         }
+        
+        number = Int.random(in: 1...50)
+        totalValueLabel.text = String(number)
+        
     }
     
     func showAlert() {
@@ -135,8 +126,5 @@ class ViewController: UIViewController {
         )
         alert.addAction(UIAlertAction(title: "Начать заново", style: .default))
         present(alert, animated: true)
-        round = 1
-        point = 0
     }
-    
 }
